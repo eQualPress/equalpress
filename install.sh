@@ -34,7 +34,7 @@ then
     print_color "yellow" "Load .env file..."
 
     # load .env variables
-    . .env
+    . ./.env
 
     if [ -z "$USERNAME" ]
     then
