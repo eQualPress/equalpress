@@ -166,7 +166,7 @@ then
         git clone https://github.com/eQualPress/eq-run.git eq-run
         git clone https://github.com/eQualPress/eq-menu.git eq-menu
         git clone https://github.com/eQualPress/eq-auth.git eq-auth
-        cd ../..
+        cd ../../../
         wp plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
         "
 
