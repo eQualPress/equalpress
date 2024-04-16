@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Function to print colored text
 print_color() {
     local color="$1"
@@ -21,7 +23,7 @@ print_color() {
 if [ ! -f .env ]
 then
     print_color "yellow" "Downloading .env file..."
-    wget https://raw.githubusercontent.com/yesbabylon/b2/master/.env -O .env
+    wget https://github.com/eQualPress/equalpress/raw/main/files/.env -O .env
 fi
 
 if [ -f .env ]
@@ -80,14 +82,14 @@ then
         print_color "yellow" "Downloading and replacing the .htaccess file..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/.htaccess
-        wget https://raw.githubusercontent.com/yesbabylon/b2/master/eQualPress_template/public/.htaccess -O public/.htaccess
+        wget https://github.com/eQualPress/equalpress/raw/main/files/public/.htaccess -O public/.htaccess
         "
 
         # Replace the public/assets/env/config.json file
         print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/assets/env/config.json
-        wget https://raw.githubusercontent.com/yesbabylon/b2/master/eQualPress_template/public/assets/env/config.json -O public/assets/env/config.json
+        wget https://github.com/eQualPress/equalpress/raw/main/files/public/assets/env/config.json -O public/assets/env/config.json
         "
 
         # Rename public/index.php to public/equal.php
