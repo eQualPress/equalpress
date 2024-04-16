@@ -1,0 +1,184 @@
+# Function to print colored text
+print_color() {
+    local color="$1"
+    local text="$2"
+    case "$color" in
+        "black") echo -e "\033[1;30m$text\033[0m" ;;
+        "red") echo -e "\033[1;31m$text\033[0m" ;;
+        "green") echo -e "\033[1;32m$text\033[0m" ;;
+        "yellow") echo -e "\033[1;33m$text\033[0m" ;;
+        "blue") echo -e "\033[1;34m$text\033[0m" ;;
+        "magenta") echo -e "\033[1;35m$text\033[0m" ;;
+        "cyan") echo -e "\033[1;36m$text\033[0m" ;;
+        "white") echo -e "\033[1;37m$text\033[0m" ;;
+        "bgred") echo -e "\033[1;37;41m$text\033[0m" ;;
+        "bggreen") echo -e "\033[1;37;42m$text\033[0m" ;;
+        *) echo "Invalid color" >&2 ;;
+    esac
+}
+
+# if .env file is missing, download it
+if [ ! -f .env ]
+then
+    print_color "yellow" "Downloading .env file..."
+    wget https://raw.githubusercontent.com/yesbabylon/b2/master/.env -O .env
+fi
+
+if [ -f .env ]
+then
+    print_color "magenta" "Welcome to eQualpress setup script!"
+    print_color "yellow" "Load .env file..."
+
+    # load .env variables
+    set -o allexport
+    source .env
+    set +o allexport
+
+    if [ -z "$USERNAME" ]
+    then
+        print_color "bgred" "A file named .env is expected and should contain following vars definition:"
+        print_color "bgred" "USERNAME={domain-name-as-user-name}"
+        print_color "bgred" "PASSWORD={user-password}"
+        print_color "bgred" "TEMPLATE={account-template}"
+    else
+        if [ ${#USERNAME} -gt 32 ]; then
+          print_color "bgred" "Error: username must be max 32 chars long" ;
+          exit 1;
+        fi
+
+        # shellcheck disable=SC2155
+        export script_dir=$(pwd)
+
+        cd /home/"$USERNAME"/www || exit
+
+        # Define a hash value with the first 5 characters of the md5sum of the username
+        HASH_VALUE=$(printf "%.5s" "$(echo "$USERNAME" | md5sum | cut -d ' ' -f 1)")
+
+        # Define DB_HOST with the hash value
+        export DB_HOSTNAME="db_$HASH_VALUE"
+
+        # Rename PHPMYADMIN_SERVICE_NAME with the hash value
+        export PMA_HOSTNAME="${PMA_HOSTNAME}_$HASH_VALUE"
+
+        # Get the number of directories in /home
+        # shellcheck disable=SC2010
+        number_of_directories=$(ls -l /home | grep -c ^d)
+
+        # Define DB_PORT with the number of directories in /home
+        # shellcheck disable=SC2004
+        export DB_PORT=$(( 3306 - 1 + $number_of_directories ))
+
+        # Define PHPMYADMIN_PORT with the number of directories in /home
+        # shellcheck disable=SC2004
+        export PHPMYADMIN_PORT=$(( 8080 - 1 + $number_of_directories ))
+
+        # Define EQ_PORT with the number of directories in /home
+        # shellcheck disable=SC2004
+        export EQ_PORT=$(( 80 - 1 + $number_of_directories ))
+
+        # Replace the .htaccess file
+        print_color "yellow" "Downloading and replacing the .htaccess file..."
+        docker exec -ti "$USERNAME" bash -c "
+        rm public/.htaccess
+        wget https://raw.githubusercontent.com/yesbabylon/b2/master/eQualPress_template/public/.htaccess -O public/.htaccess
+        "
+
+        # Replace the public/assets/env/config.json file
+        print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
+        docker exec -ti "$USERNAME" bash -c "
+        rm public/assets/env/config.json
+        wget https://raw.githubusercontent.com/yesbabylon/b2/master/eQualPress_template/public/assets/env/config.json -O public/assets/env/config.json
+        "
+
+        # Rename public/index.php to public/equal.php
+        print_color "yellow" "Renaming public/index.php to public/equal.php to avoid conflicts with WordPress..."
+        docker exec -ti "$USERNAME" bash -c "
+        mv public/index.php public/equal.php
+        "
+
+        print_color "yellow" "Replacing placeholders in files..."
+
+        # Function to replace placeholders with computed values defined above and in .env file
+        replace_placeholders() {
+            # Replace placeholders with computed values
+            for key in DB_PORT PHPMYADMIN_PORT EQ_PORT DB_HOSTNAME; do
+                value=$(eval echo \$$key)
+                for file in public/assets/env/config.json; do
+                    # Replace placeholder with value
+                    sed -i "s/{$key}/$value/g" "/home/$USERNAME/www/$file"
+                done
+            done
+
+            # Read .env file and replace placeholders with values
+            # shellcheck disable=SC2154
+            while IFS='=' read -r key value; do
+                for file in public/assets/env/config.json; do
+                    # Replace placeholder with value
+                    sed -i "s/{$key}/$value/g" "/home/$USERNAME/www/$file"
+                done
+            done < "$script_dir"/.env
+        }
+
+        replace_placeholders
+        sleep 5
+
+
+        print_color "green" "Downloading, installing and setting up WordPress"
+        # 1. Download WP-CLI
+        # 2. Make the downloaded WP-CLI executable
+        # 3. Create a directory for local binaries if it doesn't exist
+        # 4. Move the downloaded WP-CLI to the local binaries directory
+        # 5. Download WordPress core files
+        # 6. Create a wp-config.php file
+        # 7. Create uploads directory
+        # 8. Install WordPress
+        # 9. Change the owner of the files to www-data
+        docker exec -ti "$USERNAME" bash -c "
+        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        chmod +x wp-cli.phar
+        mkdir -p /usr/local/bin
+        mv wp-cli.phar /usr/local/bin/wp
+        wp core download --path='public/' --locale='en_US' --version=$WP_VERSION --allow-root
+        wp config create --path='public/' --dbname=$DB_NAME --dbuser=$APP_USERNAME --dbpass=$APP_PASSWORD --dbhost=$DB_HOSTNAME --allow-root
+        mkdir -p public/wp-content/uploads
+        wp core install --path='public/' --url=$USERNAME:$EQ_PORT --title=$WP_TITLE --admin_user=$APP_USERNAME --admin_password=$APP_PASSWORD --admin_email=$WP_EMAIL --skip-email --allow-root
+        chown -R www-data:www-data .
+        "
+
+        # Clone the WordPress package for eQual
+        print_color "green" "Cloning wordpress package..."
+        docker exec -ti "$USERNAME" bash -c "
+        cd packages
+        git clone https://github.com/eQualPress/package-wordpress.git wordpress
+        cd ..
+        sh equal.run --do=init_package --package=wordpress
+        "
+
+        # Clone eq-run eq-menu and eq-auth plugins into public/wp-content/plugins
+        print_color "green" "Cloning eQualPress plugins..."
+        docker exec -ti "$USERNAME" bash -c "
+        cd public/wp-content/plugins
+        git clone https://github.com/eQualPress/eq-run.git eq-run
+        git clone https://github.com/eQualPress/eq-menu.git eq-menu
+        git clone https://github.com/eQualPress/eq-auth.git eq-auth
+        cd ../..
+        wp plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
+        "
+
+        print_color "magenta" "Script setup completed successfully!"
+
+        # little test with wget
+        print_color "yellow" "Testing the instance..."
+        wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "WordPress"
+
+        # shellcheck disable=SC2181
+        if [ $? -eq 0 ]; then
+          print_color "bggreen" "Instance Wordpress OK"
+        else
+          print_color "bgred" "Instance Wordpress ERROR"
+        fi
+    fi
+else
+    print_color "bgred" ".env file is missing"
+fi
+
