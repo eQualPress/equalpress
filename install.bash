@@ -82,14 +82,14 @@ then
         print_color "yellow" "Downloading and replacing the .htaccess file..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/.htaccess
-        wget https://github.com/eQualPress/equalpress/raw/main/files/public/.htaccess -O public/.htaccess
+        curl -o public/.htaccess https://github.com/eQualPress/equalpress/raw/main/files/public/.htaccess
         "
 
         # Replace the public/assets/env/config.json file
         print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/assets/env/config.json
-        wget https://github.com/eQualPress/equalpress/raw/main/files/public/assets/env/config.json -O public/assets/env/config.json
+        curl -o public/assets/env/config.json https://github.com/eQualPress/equalpress/raw/main/files/public/assets/env/config.json
         "
 
         # Rename public/index.php to public/equal.php
