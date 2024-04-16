@@ -60,11 +60,10 @@ then
         DB_NAME="equal"
 
         # Define DB_HOST with the hash value
-        # DB_HOSTNAME="db_$HASH_VALUE"
+        DB_HOSTNAME="db_$HASH_VALUE"
 
-        # testing purpose need to be deleted and replaced with the line above
-        # REMOVE IT WITH ABOVE
-        DB_HOSTNAME="equal_db-1"
+        # DEVELOPPEMENT PURPOSE ONLY !!
+        # DB_HOSTNAME="equal_db-1"
 
         # Get the number of directories in /home
         # shellcheck disable=SC2010
