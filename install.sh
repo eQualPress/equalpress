@@ -19,16 +19,18 @@ print_color() {
     esac
 }
 
+print_color "magenta" "Welcome to eQualpress setup script!"
+
 # if .env file is missing, download it
 if [ ! -f .env ]
 then
+    print_color "yellow" ".env file not found."
     print_color "yellow" "Downloading .env file..."
     wget https://github.com/eQualPress/equalpress/raw/main/files/.env -O .env
 fi
 
 if [ -f .env ]
 then
-    print_color "magenta" "Welcome to eQualpress setup script!"
     print_color "yellow" "Load .env file..."
 
     # load .env variables
@@ -49,22 +51,22 @@ then
         fi
 
         # shellcheck disable=SC2155
-        export script_dir=$(pwd)
+        script_dir=$(pwd)
 
         cd /home/"$USERNAME"/www || exit
 
         # Define a hash value with the first 5 characters of the md5sum of the username
         HASH_VALUE=$(printf "%.5s" "$(echo "$USERNAME" | md5sum | cut -d ' ' -f 1)")
 
+        # Name of the database
+        DB_NAME="equal"
+
         # Define DB_HOST with the hash value
-        # export DB_HOSTNAME="db_$HASH_VALUE"
+        # DB_HOSTNAME="db_$HASH_VALUE"
 
         # testing purpose need to be deleted and replaced with the line above
         # REMOVE IT WITH ABOVE
-        export DB_HOSTNAME="equal_db-1"
-
-        # Rename PHPMYADMIN_SERVICE_NAME with the hash value
-        export PMA_HOSTNAME="${PMA_HOSTNAME}_$HASH_VALUE"
+        DB_HOSTNAME="equal_db-1"
 
         # Get the number of directories in /home
         # shellcheck disable=SC2010
@@ -72,15 +74,11 @@ then
 
         # Define DB_PORT with the number of directories in /home
         # shellcheck disable=SC2004
-        export DB_PORT=$(( 3306 - 1 + $number_of_directories ))
-
-        # Define PHPMYADMIN_PORT with the number of directories in /home
-        # shellcheck disable=SC2004
-        export PHPMYADMIN_PORT=$(( 8080 - 1 + $number_of_directories ))
+        DB_PORT=$(( 3306 - 1 + $number_of_directories ))
 
         # Define EQ_PORT with the number of directories in /home
         # shellcheck disable=SC2004
-        export EQ_PORT=$(( 80 - 1 + $number_of_directories ))
+        EQ_PORT=$(( 80 - 1 + $number_of_directories ))
 
         # Replace the .htaccess file
         print_color "yellow" "Downloading and replacing the .htaccess file..."
@@ -107,7 +105,7 @@ then
         # Function to replace placeholders with computed values defined above and in .env file
         replace_placeholders() {
             # Replace placeholders with computed values
-            for key in DB_PORT PHPMYADMIN_PORT EQ_PORT DB_HOSTNAME; do
+            for key in DB_PORT EQ_PORT DB_HOSTNAME; do
                 value=$(eval echo \$$key)
                 for file in public/assets/env/config.json; do
                     # Replace placeholder with value
@@ -175,7 +173,7 @@ then
 
         # little test with wget
         print_color "yellow" "Testing the instance..."
-        wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "eQualpress"
+        wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "$WP_TITLE"
 
         # shellcheck disable=SC2181
         if [ $? -eq 0 ]; then
