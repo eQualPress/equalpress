@@ -57,7 +57,10 @@ then
         HASH_VALUE=$(printf "%.5s" "$(echo "$USERNAME" | md5sum | cut -d ' ' -f 1)")
 
         # Define DB_HOST with the hash value
-        export DB_HOSTNAME="db_$HASH_VALUE"
+        # export DB_HOSTNAME="db_$HASH_VALUE"
+
+        # testing purpose need to be deleted and replaced with the line above
+        export DB_HOSTNAME="equal_db-1"
 
         # Rename PHPMYADMIN_SERVICE_NAME with the hash value
         export PMA_HOSTNAME="${PMA_HOSTNAME}_$HASH_VALUE"
