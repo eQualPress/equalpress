@@ -60,6 +60,7 @@ then
         # export DB_HOSTNAME="db_$HASH_VALUE"
 
         # testing purpose need to be deleted and replaced with the line above
+        # REMOVE IT WITH ABOVE
         export DB_HOSTNAME="equal_db-1"
 
         # Rename PHPMYADMIN_SERVICE_NAME with the hash value
