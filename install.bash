@@ -171,7 +171,7 @@ then
 
         # little test with wget
         print_color "yellow" "Testing the instance..."
-        wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "WordPress"
+        wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "eQualpress"
 
         # shellcheck disable=SC2181
         if [ $? -eq 0 ]; then
