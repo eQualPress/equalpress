@@ -103,7 +103,7 @@ then
         # Function to replace placeholders with computed values defined above and in .env file
         replace_placeholders() {
             # Replace placeholders with computed values
-            for key in DB_PORT EQ_PORT DB_HOSTNAME; do
+            for key in DB_PORT DB_NAME EQ_PORT DB_HOSTNAME; do
                 value=$(eval echo \$$key)
                 for file in public/assets/env/config.json; do
                     # Replace placeholder with value
