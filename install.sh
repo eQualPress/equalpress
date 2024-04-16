@@ -34,9 +34,12 @@ then
     print_color "yellow" "Load .env file..."
 
     # load .env variables
-    set -o allexport
-    source .env
-    set +o allexport
+    . .env
+    
+    # Export all variables
+    for var in $(set | grep -oE '^[^=]+'); do
+        export "$var"
+    done
 
     if [ -z "$USERNAME" ]
     then
