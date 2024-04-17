@@ -81,7 +81,7 @@ then
         print_color "yellow" "Downloading and replacing the .htaccess file..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/.htaccess
-        curl -o public/.htaccess https://github.com/eQualPress/equalpress/raw/main/files/public/.htaccess
+        wget -O public/.htaccess https://github.com/eQualPress/equalpress/raw/main/files/public/.htaccess
         "
 
         # Replace the public/assets/env/config.json file
@@ -91,7 +91,7 @@ then
         print_color "yellow" "Modifying backend_url value and adding '/equal.php'..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/assets/env/config.json
-        curl -o public/assets/env/config.json http://$USERNAME:$EQ_PORT/envinfo-temp
+        wget -O public/assets/env/config.json http://$USERNAME:$EQ_PORT/envinfo-temp
         if [ -f public/assets/env/config.json ]; then
             sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1/equal.php"#' public/assets/env/config.json
         else
