@@ -10,6 +10,7 @@ DirectoryIndex index.php equal.php index.html
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
     RewriteBase /
     RewriteRule ^index\.php$ - [L]
+    RewriteRule ^envinfo-temp$ equal.php [L,QSA]
     RewriteRule ^userinfo$ equal.php [L,QSA]
     RewriteRule ^appinfo$ equal.php [L,QSA]
     RewriteRule ^envinfo$ equal.php [L,QSA]
