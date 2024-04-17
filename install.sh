@@ -90,12 +90,17 @@ then
         print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
         print_color "yellow" "Modifying backend_url value and adding '/equal.php'..."
         docker exec -ti "$USERNAME" bash -c "
-        rm public/assets/env/config.json
-        touch public/assets/env/config.json
-        ./equal.run --get=envinfo-temp | tee public/assets/env/config.json >/dev/null
-        chmod +w public/assets/env/config.json
-        sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1\\/equal.php"#' public/assets/env/config.json
+            rm public/assets/env/config.json
+            touch public/assets/env/config.json
+            ./equal.run --get=envinfo-temp > public/assets/env/config.json
+            sleep 1
+            if [ -f public/assets/env/config.json ]; then
+                sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1\\/equal.php"#' public/assets/env/config.json
+            else
+                echo \"Failed to download config.json from http://$USERNAME:$EQ_PORT/envinfo-temp\"
+            fi
         "
+
 
         # chmod -w public/assets/env/config.json
 
