@@ -93,7 +93,7 @@ then
         rm public/assets/env/config.json
         curl -o public/assets/env/config.json http://$USERNAME/envinfo-temp
         if [ -f public/assets/env/config.json ]; then
-            sed -i 's/"backend_url": *"\(.*\)"/"backend_url": "\1\/equal.php"/' public/assets/env/config.json
+            sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1/equal.php"#' public/assets/env/config.json
         else
             echo \"Failed to download config.json from http://$USERNAME/envinfo-temp\"
         fi
