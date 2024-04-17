@@ -93,7 +93,9 @@ then
             rm public/assets/env/config.json
             touch public/assets/env/config.json
             ./equal.run --get=envinfo-temp > public/assets/env/config.json
-            sleep 1
+        "
+
+        docker exec -ti "$USERNAME" bash -c "
             if [ -f public/assets/env/config.json ]; then
                 sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1\\/equal.php"#' public/assets/env/config.json
             else
