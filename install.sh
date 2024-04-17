@@ -95,7 +95,7 @@ then
         if [ -f public/assets/env/config.json ]; then
             sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1/equal.php"#' public/assets/env/config.json
         else
-            echo \"Failed to download config.json from http://$USERNAME/envinfo-temp\"
+            echo \"Failed to download config.json from http://$USERNAME:$EQ_PORT/envinfo-temp\"
         fi
         "
 
