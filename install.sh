@@ -95,8 +95,8 @@ then
         chmod +w public/assets/env/config.json
         ./equal.run --get=envinfo-temp > public/assets/env/config.json
         sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1\\/equal.php"#' public/assets/env/config.json
-        chmod -w public/assets/env/config.json
         "
+        # chmod -w public/assets/env/config.json
 
         # Rename public/index.php to public/equal.php
         print_color "yellow" "Renaming public/index.php to public/equal.php to avoid conflicts with WordPress..."
