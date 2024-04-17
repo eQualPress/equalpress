@@ -105,33 +105,6 @@ then
         mv public/index.php public/equal.php
         "
 
-        print_color "yellow" "Replacing placeholders in files..."
-
-        # Function to replace placeholders with computed values defined above and in .env file
-        replace_placeholders() {
-            # Replace placeholders with computed values
-            for key in DB_PORT DB_NAME EQ_PORT DB_HOSTNAME; do
-                value=$(eval echo \$$key)
-                for file in public/assets/env/config.json; do
-                    # Replace placeholder with value
-                    sed -i "s/{$key}/$value/g" "/home/$USERNAME/www/$file"
-                done
-            done
-
-            # Read .env file and replace placeholders with values
-            # shellcheck disable=SC2154
-            while IFS='=' read -r key value; do
-                for file in public/assets/env/config.json; do
-                    # Replace placeholder with value
-                    sed -i "s/{$key}/$value/g" "/home/$USERNAME/www/$file"
-                done
-            done < "$script_dir"/.env
-        }
-
-        replace_placeholders
-        sleep 5
-
-
         print_color "green" "Downloading, installing and setting up WordPress"
         # 1. Download WP-CLI
         # 2. Make the downloaded WP-CLI executable
