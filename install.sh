@@ -129,7 +129,7 @@ then
         print_color "green" "Cloning wordpress package..."
         docker exec -ti "$USERNAME" bash -c "
         cd packages
-        git clone https://github.com/eQualPress/package-wordpress.git wordpress
+        git clone --quiet --progress https://github.com/eQualPress/package-wordpress.git wordpress
         cd ..
         sh equal.run --do=init_package --package=wordpress
         "
@@ -138,9 +138,9 @@ then
         print_color "green" "Cloning eQualPress plugins..."
         docker exec -ti "$USERNAME" bash -c "
         cd public/wp-content/plugins
-        git clone https://github.com/eQualPress/eq-run.git eq-run
-        git clone https://github.com/eQualPress/eq-menu.git eq-menu
-        git clone https://github.com/eQualPress/eq-auth.git eq-auth
+        git clone --quiet --progress https://github.com/eQualPress/eq-run.git eq-run
+        git clone --quiet --progress https://github.com/eQualPress/eq-menu.git eq-menu
+        git clone --quiet --progress https://github.com/eQualPress/eq-auth.git eq-auth
         cd ../../../
         php wp-cli.phar plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
         "
