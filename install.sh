@@ -85,10 +85,18 @@ then
         "
 
         # Replace the public/assets/env/config.json file
+        # Get the json file from http://$USERNAME/envinfo-temp
+        # Modify backend_url value and add '/equal.php'
         print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
+        print_color "yellow" "Modifying backend_url value and adding '/equal.php'..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/assets/env/config.json
-        curl -o public/assets/env/config.json https://github.com/eQualPress/equalpress/raw/main/files/public/assets/env/config.json
+        curl -o public/assets/env/config.json http://$USERNAME/envinfo-temp
+        if [ -f public/assets/env/config.json ]; then
+            sed -i 's/"backend_url": *"\(.*\)"/"backend_url": "\1\/equal.php"/' public/assets/env/config.json
+        else
+            echo \"Failed to download config.json from http://$USERNAME/envinfo-temp\"
+        fi
         "
 
         # Rename public/index.php to public/equal.php
