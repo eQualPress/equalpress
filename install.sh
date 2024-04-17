@@ -118,12 +118,10 @@ then
         docker exec -ti "$USERNAME" bash -c "
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
         chmod +x wp-cli.phar
-        mkdir -p /usr/local/bin
-        mv wp-cli.phar /usr/local/bin/wp
-        wp core download --path='public/' --locale='en_US' --version=$WP_VERSION --allow-root
-        wp config create --path='public/' --dbname=$DB_NAME --dbuser=$APP_USERNAME --dbpass=$APP_PASSWORD --dbhost=$DB_HOSTNAME --allow-root
+        php wp-cli.phar core download --path='public/' --locale='en_US' --version=$WP_VERSION --allow-root
+        php wp-cli.phar config create --path='public/' --dbname=$DB_NAME --dbuser=$APP_USERNAME --dbpass=$APP_PASSWORD --dbhost=$DB_HOSTNAME --allow-root
         mkdir -p public/wp-content/uploads
-        wp core install --path='public/' --url=$USERNAME:$EQ_PORT --title=$WP_TITLE --admin_user=$APP_USERNAME --admin_password=$APP_PASSWORD --admin_email=$WP_EMAIL --skip-email --allow-root
+        php wp-cli.phar core install --path='public/' --url=$USERNAME:$EQ_PORT --title=$WP_TITLE --admin_user=$APP_USERNAME --admin_password=$APP_PASSWORD --admin_email=$WP_EMAIL --skip-email --allow-root
         chown -R www-data:www-data .
         "
 
@@ -144,7 +142,7 @@ then
         git clone https://github.com/eQualPress/eq-menu.git eq-menu
         git clone https://github.com/eQualPress/eq-auth.git eq-auth
         cd ../../../
-        wp plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
+        php wp-cli.phar plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
         "
 
         print_color "magenta" "Script setup completed successfully!"
