@@ -91,7 +91,8 @@ then
         print_color "yellow" "Modifying backend_url value and adding '/equal.php'..."
         docker exec -ti "$USERNAME" bash -c "
         rm public/assets/env/config.json
-        wget http://$USERNAME:$EQ_PORT/envinfo-temp -O public/assets/env/config.json
+        touch public/assets/env/config.json
+        ./equal.run --get=envinfo-temp > public/assets/env/config.json
         if [ -f public/assets/env/config.json ]; then
             sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1/equal.php"#' public/assets/env/config.json
         else
