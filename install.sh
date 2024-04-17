@@ -101,9 +101,6 @@ then
         fi
         "
 
-
-        # chmod -w public/assets/env/config.json
-
         # Rename public/index.php to public/equal.php
         print_color "yellow" "Renaming public/index.php to public/equal.php to avoid conflicts with WordPress..."
         docker exec -ti "$USERNAME" bash -c "
