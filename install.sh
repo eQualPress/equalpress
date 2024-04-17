@@ -92,10 +92,11 @@ then
         docker exec -ti "$USERNAME" bash -c "
         rm public/assets/env/config.json
         touch public/assets/env/config.json
+        ./equal.run --get=envinfo-temp | tee public/assets/env/config.json >/dev/null
         chmod +w public/assets/env/config.json
-        ./equal.run --get=envinfo-temp > public/assets/env/config.json
         sed -i 's#"backend_url": *"\(.*\)"#"backend_url": "\1\\/equal.php"#' public/assets/env/config.json
         "
+
         # chmod -w public/assets/env/config.json
 
         # Rename public/index.php to public/equal.php
