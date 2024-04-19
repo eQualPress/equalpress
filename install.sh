@@ -87,13 +87,13 @@ then
         # Replace the public/assets/env/config.json file
         # Get the json file from http://$USERNAME/envinfo-temp
         # Modify backend_url value and add '/equal.php'
-        print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
-        print_color "yellow" "Modifying backend_url value and adding '/equal.php'..."
-        docker exec -ti "$USERNAME" bash -c "
-        rm public/assets/env/config.json
-        "
+        # print_color "yellow" "Downloading and replacing the public/assets/env/config.json file..."
+        # print_color "yellow" "Modifying backend_url value and adding '/equal.php'..."
+        # docker exec -ti "$USERNAME" bash -c "
+        # rm public/assets/env/config.json
+        # "
 
-        docker exec -i "$USERNAME" bash -c 'echo "$(./equal.run --get=envinfo-temp)" | sed "s#\"backend_url\": *\"\(.*\)\"#\"backend_url\": \"\1\/equal.php\"#" > public/assets/env/config.json'
+        # docker exec -i "$USERNAME" bash -c 'echo "$(./equal.run --get=envinfo-temp)" | sed "s#\"backend_url\": *\"\(.*\)\"#\"backend_url\": \"\1\/equal.php\"#" > public/assets/env/config.json'
 
         # Rename public/index.php to public/equal.php
         print_color "yellow" "Renaming public/index.php to public/equal.php to avoid conflicts with WordPress..."
