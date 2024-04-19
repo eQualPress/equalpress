@@ -53,7 +53,7 @@ then
 
         cd /home/"$USERNAME"/www || exit
 
-        # Define a hash value with the first 5 characters of the md5sum of the username
+        print_color "yellow" "Define a hash value with the first 5 characters of the md5sum of the username"
         HASH_VALUE=$(printf "%.5s" "$(echo "$USERNAME" | md5sum | cut -d ' ' -f 1)")
 
         # Name of the database
@@ -93,9 +93,7 @@ then
         # rm public/assets/env/config.json
         # "
 
-        # docker exec -i "$USERNAME" bash -c 'echo "$(./equal.run --get=envinfo-temp)" | sed "s#\"backend_url\": *\"\(.*\)\"#\"backend_url\": \"\1\/equal.php\"#" > public/assets/env/config.json'
 
-        # Rename public/index.php to public/equal.php
         print_color "yellow" "Renaming public/index.php to public/equal.php to avoid conflicts with WordPress..."
         docker exec -ti "$USERNAME" bash -c "
         mv public/index.php public/equal.php
@@ -115,22 +113,23 @@ then
         curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
         chmod +x wp-cli.phar
         php wp-cli.phar core download --path='public/' --locale='en_US' --version=$WP_VERSION --allow-root
-        php wp-cli.phar config create --path='public/' --dbname=$DB_NAME --dbuser=$APP_USERNAME --dbpass=$APP_PASSWORD --dbhost=$DB_HOSTNAME --allow-root
+        php wp-cli.phar config create --path='public/' --dbname=equal --dbuser=$APP_USERNAME --dbpass=$APP_PASSWORD --dbhost=$DB_HOSTNAME --allow-root
         mkdir -p public/wp-content/uploads
         php wp-cli.phar core install --path='public/' --url=$USERNAME:$EQ_PORT --title=$WP_TITLE --admin_user=$APP_USERNAME --admin_password=$APP_PASSWORD --admin_email=$WP_EMAIL --skip-email --allow-root
         chown -R www-data:www-data .
         "
 
-        # Clone the WordPress package for eQual
         print_color "green" "Cloning wordpress package..."
         docker exec -ti "$USERNAME" bash -c "
         cd packages
         git clone --quiet https://github.com/AlexisVS/package-wordpress.git wordpress
         cd ..
-        sh equal.run --do=init_package --package=wordpress
+        sh equal.run --do=init_package --package=wordpress --import=true
         "
 
-        # Clone eq-run eq-menu and eq-auth plugins into public/wp-content/plugins
+        print_color "yellow" "Create public/assets/env/config.json file."
+        docker exec -ti "$USERNAME" bash -c 'echo "$(./equal.run --get=wordpress_envinfo-temp)" > public/assets/env/config.json'
+        
         print_color "green" "Cloning eQualPress plugins..."
         docker exec -ti "$USERNAME" bash -c "
         cd public/wp-content/plugins
@@ -143,7 +142,6 @@ then
 
         print_color "magenta" "Script setup completed successfully!"
 
-        # little test with wget
         print_color "yellow" "Testing the instance..."
         wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "$WP_TITLE"
 
