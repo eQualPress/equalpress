@@ -40,24 +40,6 @@ else
 
     cd /home/"$USERNAME"/www || exit
 
-    print_color "yellow" "Define a hash value with the first 5 characters of the md5sum of the username"
-    HASH_VALUE=$(printf "%.5s" "$(echo "$USERNAME" | md5sum | cut -d ' ' -f 1)")
-
-    # Define DB_HOST with the hash value
-    DB_HOSTNAME="db_$HASH_VALUE"
-
-    # Get the number of directories in /home
-    # shellcheck disable=SC2010
-    number_of_directories=$(ls -l /home | grep -c ^d)
-
-    # Define DB_PORT with the number of directories in /home
-    # shellcheck disable=SC2004
-    DB_PORT=$(( 3306 - 1 + $number_of_directories ))
-
-    # Define EQ_PORT with the number of directories in /home
-    # shellcheck disable=SC2004
-    EQ_PORT=$(( 80 - 1 + $number_of_directories ))
-
     # Replace the .htaccess file
     print_color "yellow" "Downloading and replacing the .htaccess file..."
     docker exec -ti "$USERNAME" bash -c "
