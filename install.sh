@@ -33,11 +33,6 @@ then
     print_color "bgred" "DB_HOSTNAME={Database hostname}"
     print_color "bgred" "EQ_PORT={Equal Port}"
 else
-    if [ ${#USERNAME} -gt 32 ]; then
-      print_color "bgred" "Error: username must be max 32 chars long" ;
-      exit 1;
-    fi
-
     cd /home/"$USERNAME"/www || exit
 
     # Replace the .htaccess file
