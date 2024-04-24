@@ -70,21 +70,17 @@ else
     print_color "green" "Cloning wordpress package..."
     docker exec -ti "$USERNAME" bash -c "
     cd packages
-    git clone --quiet https://github.com/AlexisVS/package-wordpress.git wordpress
+    git clone --quiet https://github.com/eQualPress/package-wordpress.git wordpress
     cd ..
     sh equal.run --do=init_package --package=wordpress --import=true
     "
-
-    # These lines going to be deleted when equal.bundle.js going to be update.
-    print_color "yellow" "Create public/assets/env/config.json file."
-    docker exec -ti "$USERNAME" bash -c 'echo "$(./equal.run --get=wordpress_envinfo-temp)" > public/assets/env/config.json'
     
     print_color "green" "Cloning eQualPress plugins..."
     docker exec -ti "$USERNAME" bash -c "
     cd public/wp-content/plugins
-    git clone --quiet https://github.com/AlexisVS/eq-run.git eq-run
-    git clone --quiet https://github.com/AlexisVS/eq-menu.git eq-menu
-    git clone --quiet https://github.com/AlexisVS/eq-auth.git eq-auth
+    git clone --quiet https://github.com/eQualPress/eq-run.git eq-run
+    git clone --quiet https://github.com/eQualPress/eq-menu.git eq-menu
+    git clone --quiet https://github.com/eQualPress/eq-auth.git eq-auth
     cd ../../../
     php wp-cli.phar plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
     "
