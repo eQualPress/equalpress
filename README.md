@@ -2,6 +2,7 @@
 
 eQualPress is the WordPress integration of the Equal framework. It provides a set of plugins that allow you to interact
 with the Equal framework from within WordPress.
+
 Plugins provide a way to provide integration with the eQual framework for user authentication and management. It allows
 users to log in to WordPress using eQual credentials and synchronizes user data between WordPress and eQual.
 
