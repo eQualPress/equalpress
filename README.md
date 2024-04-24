@@ -26,7 +26,50 @@ users to log in to WordPress using eQual credentials and synchronizes user data 
 - **Smooth Logout Process:**
   Clears access token cookies upon user logout from WordPress, enhancing security and privacy.
 
-## Installation
+## Script explanation ``install.sh``
+
+This script automates the setup process for eQualpress instances. It configures WordPress installation and integrates necessary plugins and configurations.
+
+### Notes
+No additional notes provided.
+
+### Prerequisite
+Ensure that the `.env` file containing required variables is properly configured before executing the script.
+
+The script need these variables:
+
+```env
+# Customer directoy
+USERNAME=test.yb.run
+
+# Applications credentials
+APP_USERNAME=root
+APP_PASSWORD=test
+
+# Wordpress version
+WP_VERSION=6.4
+
+#Wordpress admin email
+WP_EMAIL=root@equal.local
+```
+
+### Progress Task
+
+1. **Checking .env File:** Verifies the existence of the `.env` file and prints variable definitions in case of absence.
+
+2. **WordPress Setup:**
+   - Replaces the `.htaccess` file to enhance security.
+   - Renames `index.php` to `equal.php` to avoid conflicts with WordPress.
+   - Downloads, installs, and sets up WordPress with specified configurations.
+   - Clones the WordPress package and initializes it using `equal.run`.
+   - Clones eQualPress plugins and activates them within WordPress.
+   - Displays a success message upon completion.
+
+3. **Testing Instance:**
+   - Tests the instance by querying the WordPress site and checking for the presence of the specified title.
+   - Prints a success or error message based on the test result.
+
+### Usage
 
 1. Upload the script ``install.sh`` in your eQual project.
 2. Run the following command:
