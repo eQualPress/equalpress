@@ -61,7 +61,7 @@ WP_EMAIL=root@equal.local
 2. **WordPress Setup:**
    - Replaces the `.htaccess` file to enhance security.
    - Renames `index.php` to `equal.php` to avoid conflicts with WordPress.
-   - Downloads, installs, and sets up WordPress with specified configurations.
+   - Downloads, installs, and sets up WordPress with specified configurations with ``wp-cli.phar`.
    - Clones the WordPress package and initializes it using `equal.run`.
    - Clones eQualPress plugins and activates them within WordPress.
    - Displays a success message upon completion.
