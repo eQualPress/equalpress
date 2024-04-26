@@ -89,7 +89,7 @@ else
     print_color "magenta" "Script setup completed successfully!"
 
     print_color "yellow" "Testing the instance..."
-    wget -qO- http://"$USERNAME":$EQ_PORT | grep -q "$WP_TITLE"
+    wget -qO- http://0.0.0.0:$EQ_PORT | grep -q "$WP_TITLE"
 
     # shellcheck disable=SC2181
     if [ $? -eq 0 ]; then
