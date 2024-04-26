@@ -71,6 +71,7 @@ else
     docker exec "$USERNAME" bash -c "
     cd packages
     yes | git clone --quiet https://github.com/eQualPress/package-wordpress.git wordpress
+    chown -R www-data:www-data wordpress
     cd ..
     sh equal.run --do=init_package --package=wordpress --import=true
     "
