@@ -76,7 +76,7 @@ else
     "
     
     print_color "green" "Cloning eQualPress plugins..."
-    docker exec -ti "$USERNAME" bash -c "
+    docker exec "$USERNAME" bash -c "
     cd public/wp-content/plugins
     yes | git clone --quiet https://github.com/eQualPress/eq-run.git eq-run
     yes | git clone --quiet https://github.com/eQualPress/eq-menu.git eq-menu
