@@ -37,13 +37,13 @@ else
 
     # Replace the .htaccess file
     print_color "yellow" "Downloading and replacing the .htaccess file..."
-    docker exec -ti "$USERNAME" bash -c "
+    docker exec "$USERNAME" bash -c "
     rm public/.htaccess
     wget https://raw.githubusercontent.com/eQualPress/equalpress/main/files/public/.htaccess -O public/.htaccess
     "
 
     print_color "yellow" "Renaming public/index.php to public/equal.php to avoid conflicts with WordPress..."
-    docker exec -ti "$USERNAME" bash -c "
+    docker exec "$USERNAME" bash -c "
     mv public/index.php public/equal.php
     "
 
@@ -57,7 +57,7 @@ else
     # 7. Create uploads directory
     # 8. Install WordPress
     # 9. Change the owner of the files to www-data
-    docker exec -ti "$USERNAME" bash -c "
+    docker exec "$USERNAME" bash -c "
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
     php wp-cli.phar core download --path='public/' --locale='en_US' --version=$WP_VERSION --allow-root
@@ -68,9 +68,9 @@ else
     "
 
     print_color "green" "Cloning wordpress package..."
-    docker exec -ti "$USERNAME" bash -c "
+    docker exec "$USERNAME" bash -c "
     cd packages
-    git clone --quiet https://github.com/eQualPress/package-wordpress.git wordpress
+    yes | git clone --quiet https://github.com/eQualPress/package-wordpress.git wordpress
     cd ..
     sh equal.run --do=init_package --package=wordpress --import=true
     "
@@ -78,9 +78,9 @@ else
     print_color "green" "Cloning eQualPress plugins..."
     docker exec -ti "$USERNAME" bash -c "
     cd public/wp-content/plugins
-    git clone --quiet https://github.com/eQualPress/eq-run.git eq-run
-    git clone --quiet https://github.com/eQualPress/eq-menu.git eq-menu
-    git clone --quiet https://github.com/eQualPress/eq-auth.git eq-auth
+    yes | git clone --quiet https://github.com/eQualPress/eq-run.git eq-run
+    yes | git clone --quiet https://github.com/eQualPress/eq-menu.git eq-menu
+    yes | git clone --quiet https://github.com/eQualPress/eq-auth.git eq-auth
     cd ../../../
     php wp-cli.phar plugin activate eq-run eq-menu eq-auth --path='public/' --allow-root
     "
