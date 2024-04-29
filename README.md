@@ -40,7 +40,9 @@ Ensure that the `.env` file containing required variables is properly configured
 The script need these variables:
 
 ```env
-# Customer directoy
+# Customer directoy created in /home
+# Linux user created with the same name
+# Docker container created with the same name
 USERNAME=test.yb.run
 
 # Applications credentials
