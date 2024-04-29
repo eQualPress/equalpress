@@ -45,7 +45,7 @@ The script need these variables:
 # Docker container created with the same name
 USERNAME=test.yb.run
 
-# Applications credentials
+# Applications credentials used for eQual, database and eQualPress
 APP_USERNAME=root
 APP_PASSWORD=test
 
